@@ -259,8 +259,9 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
         if ($this->helper->useCategoriesPathForProductUrls($storeId)) {
             $productsIds = $this->_getCategoriesProductsIds($category->getAllChildren());
             if (!empty($productsIds)) {
-                $this->regenerateProductRewrites->regenerateOptions = $this->regenerateOptions;
-                $this->regenerateProductRewrites->regenerateOptions['showProgress'] = false;
+                $options = $this->regenerateOptions;
+                $options['showProgress'] = false;
+                $this->regenerateProductRewrites->setRegenerateOptions($options);
                 $this->regenerateProductRewrites->regenerateProductsRangeUrlRewrites($productsIds, $storeId);
             }
         }
@@ -319,9 +320,10 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
         $result = [];
 
         if (!empty($categoryIds)) {
+            $ids = array_filter(array_map('intval', explode(',', $categoryIds)));
             $select = $this->_getResourceConnection()->getConnection()->select()
                 ->from($this->_getCategoryProductsTableName(), ['product_id'])
-                ->where("category_id IN ({$categoryIds})");
+                ->where('category_id IN (?)', $ids);
             $rows = $this->_getResourceConnection()->getConnection()->fetchAll($select);
 
             foreach ($rows as $row) {

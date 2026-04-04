@@ -10,6 +10,7 @@
 
 namespace OlegKoval\RegenerateUrlRewrites\Console\Command;
 
+use Magento\Framework\App\Area;
 use Magento\Framework\Exception\LocalizedException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -141,7 +142,7 @@ class RegenerateUrlRewrites extends RegenerateUrlRewritesAbstract
         } catch (LocalizedException $e) {
             // if area code is not set then magento generate exception "LocalizedException"
             try {
-                $this->_appState->setAreaCode('adminhtml');
+                $this->_appState->setAreaCode(Area::AREA_ADMINHTML);
             } catch (LocalizedException $e) {}
         }
 
@@ -151,10 +152,10 @@ class RegenerateUrlRewrites extends RegenerateUrlRewritesAbstract
             $this->_storeManager->setCurrentStore($storeId);
 
             if ($this->_commandOptions['entityType'] == self::INPUT_KEY_REGENERATE_ENTITY_TYPE_PRODUCT) {
-                $this->regenerateProductRewrites->regenerateOptions = $this->_commandOptions;
+                $this->regenerateProductRewrites->setRegenerateOptions($this->_commandOptions);
                 $this->regenerateProductRewrites->regenerate($storeId);
             } elseif ($this->_commandOptions['entityType'] == self::INPUT_KEY_REGENERATE_ENTITY_TYPE_CATEGORY) {
-                $this->regenerateCategoryRewrites->regenerateOptions = $this->_commandOptions;
+                $this->regenerateCategoryRewrites->setRegenerateOptions($this->_commandOptions);
                 $this->regenerateCategoryRewrites->regenerate($storeId);
             }
         }

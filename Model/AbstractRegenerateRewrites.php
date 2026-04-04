@@ -56,7 +56,7 @@ abstract class AbstractRegenerateRewrites
      * Regenerate Rewrites custom options
      * @var array
      */
-    public $regenerateOptions = [];
+    protected $regenerateOptions = [];
 
     /**
      * @var RegenerateHelper
@@ -98,6 +98,11 @@ abstract class AbstractRegenerateRewrites
      * @param int $storeId
      * @return mixed
      */
+    public function setRegenerateOptions(array $options): void
+    {
+        $this->regenerateOptions = $options;
+    }
+
     abstract function regenerate(int $storeId = 0);
 
     /**
@@ -362,7 +367,7 @@ abstract class AbstractRegenerateRewrites
      * @param array $rewrite
      * @return string
      */
-    protected function _urlRewriteExists(array $rewrite): string
+    protected function _urlRewriteExists(array $rewrite): string|false
     {
         $select = $this->_getResourceConnection()->getConnection()->select()
             ->from($this->_getMainTableName(), ['url_rewrite_id'])

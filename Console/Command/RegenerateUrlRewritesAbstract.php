@@ -185,10 +185,12 @@ abstract class RegenerateUrlRewritesAbstract extends Command
 
         // get existed ID's from this range in entity DB table
         $tableName = $this->_resource->getTableName('catalog_' . $type . '_entity');
-        $ids = implode(', ', $tmpIds);
-        $sql = "SELECT entity_id FROM {$tableName} WHERE entity_id IN ({$ids}) ORDER BY entity_id";
+        $select = $this->_resource->getConnection()->select()
+            ->from($tableName, ['entity_id'])
+            ->where('entity_id IN (?)', $tmpIds)
+            ->order('entity_id ASC');
 
-        $queryResult = $this->_resource->getConnection()->fetchAll($sql);
+        $queryResult = $this->_resource->getConnection()->fetchAll($select);
 
         foreach ($queryResult as $row) {
             $result[] = (int)$row['entity_id'];

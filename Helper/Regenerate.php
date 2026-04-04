@@ -128,6 +128,6 @@ class Regenerate extends AbstractHelper
      */
     protected function _clearRequestPath(string $requestPath): string
     {
-        return str_replace(['//', './'], ['/', '/'], ltrim(ltrim($requestPath, '/'), '.'));
+        return str_replace(['//', './'], ['/', '/'], ltrim($requestPath, '/.'));
     }
 }
