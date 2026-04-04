@@ -22,8 +22,6 @@ use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGeneratorFactory;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGeneratorFactory;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
-use Magento\CatalogUrlRewrite\Observer\UrlRewriteHandlerFactory;
-use Magento\CatalogUrlRewrite\Observer\UrlRewriteHandler;
 
 class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
 {
@@ -73,16 +71,6 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
     protected $categoryUrlRewriteGenerator;
 
     /**
-     * @var UrlRewriteHandlerFactory
-     */
-    protected $urlRewriteHandlerFactory;
-
-    /**
-     * @var UrlRewriteHandler
-     */
-    protected $urlRewriteHandler;
-
-    /**
      * @var RegenerateProductRewrites
      */
     protected $regenerateProductRewrites;
@@ -94,7 +82,6 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
      * @param DatabaseMapPool\Proxy $databaseMapPool
      * @param CategoryUrlPathGeneratorFactory\Proxy $categoryUrlPathGeneratorFactory
      * @param CategoryUrlRewriteGeneratorFactory\Proxy $categoryUrlRewriteGeneratorFactory
-     * @param UrlRewriteHandlerFactory\Proxy $urlRewriteHandlerFactory
      * @param RegenerateProductRewrites $regenerateProductRewrites
      */
     public function __construct(
@@ -104,7 +91,6 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
         DatabaseMapPool\Proxy                    $databaseMapPool,
         CategoryUrlPathGeneratorFactory\Proxy    $categoryUrlPathGeneratorFactory,
         CategoryUrlRewriteGeneratorFactory\Proxy $categoryUrlRewriteGeneratorFactory,
-        UrlRewriteHandlerFactory\Proxy           $urlRewriteHandlerFactory,
         RegenerateProductRewrites                $regenerateProductRewrites
     )
     {
@@ -114,7 +100,6 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
         $this->databaseMapPool = $databaseMapPool;
         $this->categoryUrlPathGeneratorFactory = $categoryUrlPathGeneratorFactory;
         $this->categoryUrlRewriteGeneratorFactory = $categoryUrlRewriteGeneratorFactory;
-        $this->urlRewriteHandlerFactory = $urlRewriteHandlerFactory;
         $this->regenerateProductRewrites = $regenerateProductRewrites;
 
         $this->dataUrlRewriteClassNames = [
@@ -362,19 +347,6 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
         return $this->categoryUrlRewriteGenerator;
     }
 
-    /**
-     * Get Url Rewrite handler
-     *
-     * @return UrlRewriteHandler
-     */
-    protected function _getUrlRewriteHandler(): UrlRewriteHandler
-    {
-        if (is_null($this->urlRewriteHandler)) {
-            $this->urlRewriteHandler = $this->urlRewriteHandlerFactory->create();
-        }
-
-        return $this->urlRewriteHandler;
-    }
 
     /**
      * Resets used data maps to free up memory and temporary tables

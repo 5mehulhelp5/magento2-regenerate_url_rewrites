@@ -235,11 +235,13 @@ abstract class AbstractRegenerateRewrites
     {
         if (!empty($entitiesData)) {
             $whereConditions = [];
+            $connection = $this->_getResourceConnection()->getConnection();
             foreach ($entitiesData as $entityData) {
-                $whereConditions[] = sprintf(
-                    '(entity_type = \'%s\' AND entity_id = %d AND store_id = %d)',
-                    $entityData['entity_type'], $entityData['entity_id'], $entityData['store_id']
-                );
+                $whereConditions[] = '('
+                    . $connection->quoteInto('entity_type = ?', $entityData['entity_type'])
+                    . $connection->quoteInto(' AND entity_id = ?', (int)$entityData['entity_id'])
+                    . $connection->quoteInto(' AND store_id = ?', (int)$entityData['store_id'])
+                    . ')';
             }
             $whereConditions = array_unique($whereConditions);
 
