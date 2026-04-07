@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - fixed _clearRequestPath() to correctly handle multiple consecutive slashes
 - removed dead code from category URL rewrite model
 - display validation errors before command failure
+- display a completed progress bar for empty product/category collections
 - normalized line endings to LF
 
 ## [1.7.1] - 2025-05-30

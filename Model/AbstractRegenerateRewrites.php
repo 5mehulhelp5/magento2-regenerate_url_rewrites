@@ -159,6 +159,12 @@ abstract class AbstractRegenerateRewrites
             return;
         }
 
+        if ($this->progressBarTotal === 0) {
+            echo "\r[" . str_repeat('=', $size + 1) . "] 100%  0/0\r\n";
+            flush();
+            return;
+        }
+
         // if we go over our bound, just ignore it
         if ($this->progressBarProgress > $this->progressBarTotal) {
             return;

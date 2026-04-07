@@ -160,6 +160,7 @@ class RegenerateProductRewrites extends AbstractRegenerateRewrites
         $this->progressBarTotal = (int)$products->getSize();
         $currentPage = 1;
 
+        $this->_showProgress();
         while ($currentPage <= $pageCount) {
             $products->clear();
             $products->setCurPage($currentPage);
