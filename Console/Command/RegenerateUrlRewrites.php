@@ -133,6 +133,7 @@ class RegenerateUrlRewrites extends RegenerateUrlRewritesAbstract
             foreach ($this->_errors as $error) {
                 $this->_addConsoleMsg($error);
             }
+            $this->_displayConsoleMsg();
             return  Command::FAILURE;
         }
 
