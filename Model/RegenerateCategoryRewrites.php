@@ -170,29 +170,35 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
     {
         try {
             $categories = $this->_getCategoriesCollection($categoriesFilter, $storeId);
+        } catch (LocalizedException $e) {
+            // could not build the categories collection at all - nothing to process
+            return $this;
+        }
 
-            $pageCount = $categories->getLastPageNumber();
-            $this->progressBarProgress = 0;
-            $this->progressBarTotal = (int)$categories->getSize();
-            $currentPage = 1;
+        $pageCount = $categories->getLastPageNumber();
+        $this->progressBarProgress = 0;
+        $this->progressBarTotal = (int)$categories->getSize();
+        $currentPage = 1;
 
-            $this->_showProgress();
-            while ($currentPage <= $pageCount) {
-                $categories->clear();
-                $categories->setCurPage($currentPage);
+        $this->_showProgress();
+        while ($currentPage <= $pageCount) {
+            $categories->clear();
+            $categories->setCurPage($currentPage);
 
-                foreach ($categories as $category) {
+            foreach ($categories as $category) {
+                try {
                     $this->categoryProcess($category, $storeId);
-                    $this->_showProgress();
+                } catch (\Exception $e) {
+                    // skip this category (e.g. broken/orphaned category tree) and continue with the rest
                 }
-
-                $currentPage++;
+                $this->progressBarProgress++;
+                $this->_showProgress();
             }
 
-            $this->_updateSecondaryTable();
-        } catch (LocalizedException $e) {
-            // skip it
+            $currentPage++;
         }
+
+        $this->_updateSecondaryTable();
 
         return $this;
     }
@@ -253,8 +259,6 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
 
         //frees memory for maps that are self-initialized in multiple classes that were called by the generators
         $this->_resetUrlRewritesDataMaps($category);
-
-        $this->progressBarProgress++;
 
         return $this;
     }
