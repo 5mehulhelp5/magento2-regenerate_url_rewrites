@@ -61,8 +61,8 @@ or
 * to save a current Url Rewrites (you want to get a new URL rewites and save current) use option `--save-old-urls`:
 >`$> php bin/magento ok:urlrewrites:regenerate --save-old-urls`
 
-* to prevent regeneration of "url_key" values (use current "url_key" values) use option `--no-regen-url-key`:
->`$> php bin/magento ok:urlrewrites:regenerate --no-regen-url-key`
+* by default "url_key" values are NOT regenerated (current "url_key" values are kept); to also regenerate "url_key" values use option `--regen-url-key`:
+>`$> php bin/magento ok:urlrewrites:regenerate --regen-url-key`
 
 * if you do not want to run a full reindex at the end of Url Rewrites generation then use option `--no-reindex`:
 >`$> php bin/magento ok:urlrewrites:regenerate --no-reindex`
@@ -91,7 +91,7 @@ or
 \*\* If you use options `--category-id` or `--categories-range` then you can skip option `--entity-type=category` - extension will understand that you want to use a category entity.
 
 ### YOU CAN COMBINE OPTIONS
->`$> php bin/magento ok:urlrewrites:regenerate --store-id=2 --save-old-urls --no-regen-url-key --no-reindex`
+>`$> php bin/magento ok:urlrewrites:regenerate --store-id=2 --save-old-urls --regen-url-key --no-reindex`
 
 ### YOU CANNOT COMBINE THESE OPTIONS
 * `--entity-type=product` and `--category-id`/`--categories-range`
@@ -100,6 +100,7 @@ or
 
 ### DEPRECATED OPTIONS
 * `--check-use-category-in-product-url` — extension uses a built-in Magento Url Rewrites generator which check this option in any way.
+* `--no-regen-url-key` — **removed in 1.8.0** (not just deprecated — passing it will now cause an "unrecognized option" error). url_key regeneration behavior was inverted: it is now skipped by default and only runs when you explicitly pass `--regen-url-key`. If you relied on the old default (url_key regenerated automatically), add `--regen-url-key` to your existing commands/scripts/cron jobs after upgrading to 1.8.0.
 
 ### EXAMPLES OF USAGE
 * Regenerate Url Rewrites for product with ID "38" in store with ID "3":

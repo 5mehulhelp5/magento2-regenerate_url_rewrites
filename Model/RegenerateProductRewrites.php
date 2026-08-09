@@ -195,7 +195,7 @@ class RegenerateProductRewrites extends AbstractRegenerateRewrites
         // see logic in a core Product Url model: \Magento\Catalog\Model\Product\Url::getUrl()
         // if "request_path" is not null or equal to "false" then Magento do not search and do not use Url Rewrites
         $updateAttributes = ['url_path' => null];
-        if (!$this->regenerateOptions['noRegenUrlKey']) {
+        if ($this->regenerateOptions['regenUrlKey']) {
             $generatedKey = $this->_getProductUrlPathGenerator()->getUrlKey($entity->setUrlKey(null));
             $updateAttributes['url_key'] = $generatedKey;
         }

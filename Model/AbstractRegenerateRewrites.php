@@ -89,7 +89,7 @@ abstract class AbstractRegenerateRewrites
         $this->regenerateOptions['categoryId'] = null;
         $this->regenerateOptions['productId'] = null;
         $this->regenerateOptions['checkUseCategoryInProductUrl'] = false;
-        $this->regenerateOptions['noRegenUrlKey'] = false;
+        $this->regenerateOptions['regenUrlKey'] = false;
         $this->regenerateOptions['showProgress'] = false;
     }
 

@@ -105,10 +105,10 @@ class RegenerateUrlRewrites extends RegenerateUrlRewritesAbstract
                     'Specific product ID, e.g.: 107'
                 ),
                 new InputOption(
-                    self::INPUT_KEY_NO_REGEN_URL_KEY,
+                    self::INPUT_KEY_REGEN_URL_KEY,
                     null,
                     InputOption::VALUE_NONE,
-                    'Prevent url_key regeneration'
+                    'Regenerate url_key values (by default url_key is not regenerated).'
                 ),
             ]);
     }
@@ -199,8 +199,8 @@ class RegenerateUrlRewrites extends RegenerateUrlRewritesAbstract
             $this->_commandOptions['saveOldUrls'] = true;
         }
 
-        if (isset($options[self::INPUT_KEY_NO_REGEN_URL_KEY]) && $options[self::INPUT_KEY_NO_REGEN_URL_KEY] === true) {
-            $this->_commandOptions['noRegenUrlKey'] = true;
+        if (isset($options[self::INPUT_KEY_REGEN_URL_KEY]) && $options[self::INPUT_KEY_REGEN_URL_KEY] === true) {
+            $this->_commandOptions['regenUrlKey'] = true;
         }
 
         if (isset($options[self::INPUT_KEY_NO_REINDEX]) && $options[self::INPUT_KEY_NO_REINDEX] === true) {

@@ -218,7 +218,7 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
             $category->setData('save_rewrites_history', true);
         }
 
-        if (!$this->regenerateOptions['noRegenUrlKey']) {
+        if ($this->regenerateOptions['regenUrlKey']) {
             $category->setOrigData('url_key', null);
             $category->setUrlKey($this->_getCategoryUrlPathGenerator()->getUrlKey($category->setUrlKey(null)));
             $category->getResource()->saveAttribute($category, 'url_key');
