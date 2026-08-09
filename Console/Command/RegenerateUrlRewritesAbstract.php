@@ -254,7 +254,7 @@ abstract class RegenerateUrlRewritesAbstract extends Command
     {
         if ($this->_commandOptions['runReindex']) {
             $this->_output->write('Reindexation...');
-            shell_exec('php bin/magento indexer:reindex');
+            shell_exec(escapeshellarg(PHP_BINARY) . ' bin/magento indexer:reindex');
             $this->_output->writeln(' Done');
         }
     }
@@ -269,10 +269,10 @@ abstract class RegenerateUrlRewritesAbstract extends Command
         if ($this->_commandOptions['runCacheClean'] || $this->_commandOptions['runCacheFlush']) {
             $this->_output->write('Cache refreshing...');
             if ($this->_commandOptions['runCacheClean']) {
-                shell_exec('php bin/magento cache:clean');
+                shell_exec(escapeshellarg(PHP_BINARY) . ' bin/magento cache:clean');
             }
             if ($this->_commandOptions['runCacheFlush']) {
-                shell_exec('php bin/magento cache:flush');
+                shell_exec(escapeshellarg(PHP_BINARY) . ' bin/magento cache:flush');
             }
             $this->_output->writeln(' Done');
             $this->_output->writeln('If you use some external cache mechanisms (e.g.: Redis, Varnish, etc.) - please, refresh this external cache.');
