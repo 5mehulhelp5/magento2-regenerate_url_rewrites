@@ -125,24 +125,28 @@ abstract class AbstractRegenerateRewrites
     {
         $data = $this->_prepareUrlRewrites($urlRewrites);
 
-        if (!$this->regenerateOptions['saveOldUrls']) {
-            if (empty($entityData) && !empty($data)) {
-                $entityData = $data;
-            }
-            $this->_deleteCurrentRewrites($entityData);
+        if (!$this->regenerateOptions['saveOldUrls'] && empty($entityData) && !empty($data)) {
+            $entityData = $data;
         }
 
-        $this->_getResourceConnection()->getConnection()->beginTransaction();
+        // delete + insert run in a single transaction so a failed insert can't leave an entity
+        // with its old rewrites deleted and nothing to replace them (see #137)
+        $connection = $this->_getResourceConnection()->getConnection();
+        $connection->beginTransaction();
         try {
-            $this->_getResourceConnection()->getConnection()->insertOnDuplicate(
+            if (!$this->regenerateOptions['saveOldUrls']) {
+                $this->_deleteCurrentRewrites($entityData);
+            }
+
+            $connection->insertOnDuplicate(
                 $this->_getMainTableName(),
                 $data,
                 ['request_path', 'metadata']
             );
-            $this->_getResourceConnection()->getConnection()->commit();
+            $connection->commit();
 
         } catch (\Exception $e) {
-            $this->_getResourceConnection()->getConnection()->rollBack();
+            $connection->rollBack();
         }
 
         return $this;
@@ -251,17 +255,12 @@ abstract class AbstractRegenerateRewrites
             }
             $whereConditions = array_unique($whereConditions);
 
-            $this->_getResourceConnection()->getConnection()->beginTransaction();
-            try {
-                $this->_getResourceConnection()->getConnection()->delete(
-                    $this->_getMainTableName(),
-                    implode(' OR ', $whereConditions)
-                );
-                $this->_getResourceConnection()->getConnection()->commit();
-
-            } catch (\Exception $e) {
-                $this->_getResourceConnection()->getConnection()->rollBack();
-            }
+            // transaction is managed by the caller (saveUrlRewrites()), so delete + insert commit
+            // or roll back together (see #137)
+            $connection->delete(
+                $this->_getMainTableName(),
+                implode(' OR ', $whereConditions)
+            );
         }
 
         return $this;
