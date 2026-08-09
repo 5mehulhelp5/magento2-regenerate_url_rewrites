@@ -278,9 +278,10 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
             ->addAttributeToSelect('url_key')
             ->addAttributeToSelect('url_path')
             ->setStoreId($storeId)
-            // if we need to regenerate Url Rewrites for all categories, then we select only top level
-            // and all subcategories (and products) will be regenerated as children
-            ->addFieldToFilter('level', (count($categoriesFilter) > 0 ? ['gt' => '1'] : 2))
+            // every category under the root - top level down to the deepest child - is processed
+            // individually, so each one's own url_key/url_path gets regenerated (see #153/#166);
+            // Magento's own generator only cascades url_rewrite rows to children, not their attributes
+            ->addFieldToFilter('level', ['gt' => '1'])
             ->setOrder('level', 'ASC')
             // use limit to avoid an "eating" of a memory
             ->setPageSize($this->categoriesCollectionPageSize);
@@ -292,10 +293,33 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
         }
 
         if (count($categoriesFilter) > 0) {
-            $categoriesCollection->addIdFilter($categoriesFilter);
+            // include the targeted categories AND all of their descendants, not just the literal
+            // IDs given, so descendant categories' own url_key/url_path also get regenerated
+            $orConditions = [
+                ['attribute' => 'entity_id', 'in' => $categoriesFilter],
+            ];
+            foreach ($this->_getCategoriesPaths($categoriesFilter) as $path) {
+                $orConditions[] = ['attribute' => 'path', 'like' => $path . '/%'];
+            }
+            $categoriesCollection->addAttributeToFilter($orConditions);
         }
 
         return $categoriesCollection;
+    }
+
+    /**
+     * Get "path" attribute values for given category IDs
+     *
+     * @param array $categoryIds
+     * @return array
+     */
+    protected function _getCategoriesPaths(array $categoryIds): array
+    {
+        $select = $this->_getResourceConnection()->getConnection()->select()
+            ->from($this->_getResourceConnection()->getTableName('catalog_category_entity'), ['path'])
+            ->where('entity_id IN (?)', $categoryIds);
+
+        return $this->_getResourceConnection()->getConnection()->fetchCol($select);
     }
 
     /**
