@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.7.3] - 2026-08-09
+### Changed
+- fixed deprecated non-canonical (double) type cast for PHP 8.5 compatibility
+- use the current PHP executable (PHP_BINARY) instead of a hardcoded "php" command for reindex/cache calls
+- fixed category URL rewrite regeneration stopping entirely when a single broken/orphaned category is encountered
+- added missing type hint and defensive casting in a couple of helper methods
+- declared minimum supported PHP version (>=8.2) in composer.json
+
 ## [1.7.2] - 2026-03-31
 ### Changed
 - fixed deprecated functionality: ctype_digit()
