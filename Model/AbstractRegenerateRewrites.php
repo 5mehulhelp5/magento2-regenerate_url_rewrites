@@ -405,10 +405,10 @@ abstract class AbstractRegenerateRewrites
     /**
      * Get root category I'd of specific store
      *
-     * @param $storeId
+     * @param int $storeId
      * @return int|null
      */
-    protected function _getStoreRootCategoryId($storeId): ?int
+    protected function _getStoreRootCategoryId(int $storeId): ?int
     {
         if (empty($this->storeRootCategoryId[$storeId])) {
             $value = null;
