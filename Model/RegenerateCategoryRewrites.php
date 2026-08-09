@@ -220,8 +220,14 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
 
         if ($this->regenerateOptions['regenUrlKey']) {
             $category->setOrigData('url_key', null);
-            $category->setUrlKey($this->_getCategoryUrlPathGenerator()->getUrlKey($category->setUrlKey(null)));
-            $category->getResource()->saveAttribute($category, 'url_key');
+            $generatedKey = $this->_getCategoryUrlPathGenerator()->getUrlKey($category->setUrlKey(null));
+            $category->setUrlKey($generatedKey);
+
+            // don't write a redundant per-store override if it's identical to the default-scope
+            // value (see #92)
+            if ($storeId == 0 || $generatedKey !== $this->_getDefaultScopeUrlKey($category->getId())) {
+                $category->getResource()->saveAttribute($category, 'url_key');
+            }
         }
 
         try {
@@ -320,6 +326,25 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
             ->where('entity_id IN (?)', $categoryIds);
 
         return $this->_getResourceConnection()->getConnection()->fetchCol($select);
+    }
+
+    /**
+     * Get default-scope (store 0) url_key value for a category, to avoid writing a redundant
+     * per-store override when it would be identical (see #92)
+     *
+     * @param int $entityId
+     * @return string|null
+     */
+    protected function _getDefaultScopeUrlKey(int $entityId): ?string
+    {
+        $collection = $this->categoryCollectionFactory->create();
+        $collection->addAttributeToSelect('url_key')
+            ->addIdFilter([$entityId])
+            ->setStoreId(0);
+
+        $category = $collection->getFirstItem();
+
+        return $category->getId() ? $category->getUrlKey() : null;
     }
 
     /**

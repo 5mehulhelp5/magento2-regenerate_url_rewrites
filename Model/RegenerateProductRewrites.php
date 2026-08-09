@@ -197,7 +197,12 @@ class RegenerateProductRewrites extends AbstractRegenerateRewrites
         $updateAttributes = ['url_path' => null];
         if ($this->regenerateOptions['regenUrlKey']) {
             $generatedKey = $this->_getProductUrlPathGenerator()->getUrlKey($entity->setUrlKey(null));
-            $updateAttributes['url_key'] = $generatedKey;
+
+            // don't write a redundant per-store override if it's identical to the default-scope
+            // value (see #92)
+            if ($storeId == 0 || $generatedKey !== $this->_getDefaultScopeUrlKey($entity->getId())) {
+                $updateAttributes['url_key'] = $generatedKey;
+            }
         }
 
         try {
@@ -259,6 +264,25 @@ class RegenerateProductRewrites extends AbstractRegenerateRewrites
         }
 
         return $this->productUrlPathGenerator;
+    }
+
+    /**
+     * Get default-scope (store 0) url_key value for a product, to avoid writing a redundant
+     * per-store override when it would be identical (see #92)
+     *
+     * @param int $entityId
+     * @return string|null
+     */
+    protected function _getDefaultScopeUrlKey(int $entityId): ?string
+    {
+        $collection = $this->productCollectionFactory->create();
+        $collection->addAttributeToSelect('url_key')
+            ->addIdFilter([$entityId])
+            ->setStore(0);
+
+        $product = $collection->getFirstItem();
+
+        return $product->getId() ? $product->getUrlKey() : null;
     }
 
     /**
