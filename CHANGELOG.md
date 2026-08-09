@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.8.0] - 2026-08-10
+### Changed
+- **BREAKING**: inverted url_key regeneration default — url_key is no longer regenerated automatically; use the new `--regen-url-key` option to opt in. The old `--no-regen-url-key` option is removed entirely (not deprecated) — update any existing scripts/cron jobs that relied on the previous default.
+- fixed data loss risk in `saveUrlRewrites()`: deleting existing rewrites and inserting new ones now happen in a single transaction, so a failed insert can no longer leave an entity with its rewrites deleted and nothing to replace them
+- fixed category URL rewrite regeneration to process every category (top level down to the deepest child) instead of only top-level categories, so child categories' own url_key/url_path are regenerated too
+- skip writing a redundant per-store url_key override when the regenerated value is identical to the default-scope value
+
+### Added
+- new option `--delete-orphaned-rewrites` — deletes url_rewrite rows (for the given `--entity-type`) whose product/category no longer exists
+
 ## [1.7.3] - 2026-08-09
 ### Changed
 - fixed deprecated non-canonical (double) type cast for PHP 8.5 compatibility
