@@ -170,7 +170,7 @@ abstract class AbstractRegenerateRewrites
             return;
         }
 
-        $perc = $this->progressBarTotal ? (double)($this->progressBarProgress / $this->progressBarTotal) : 1;
+        $perc = $this->progressBarTotal ? (float)($this->progressBarProgress / $this->progressBarTotal) : 1;
         $bar = floor($perc * $size);
 
         $status_bar = "\r[";
