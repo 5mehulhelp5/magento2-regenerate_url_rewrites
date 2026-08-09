@@ -76,6 +76,12 @@ or
 * if you do not want to display a progress bar in the console then use option `--no-progress`:
 >`$> php bin/magento ok:urlrewrites:regenerate --no-progress`
 
+* to delete `url_rewrite` rows (for the given `--entity-type`) whose product/category no longer exists, use option `--delete-orphaned-rewrites`:
+>`$> php bin/magento ok:urlrewrites:regenerate --delete-orphaned-rewrites`
+
+or, for categories:
+>`$> php bin/magento ok:urlrewrites:regenerate --entity-type=category --delete-orphaned-rewrites`
+
 #### REGENERATE URL REWRITES OF CATEGORY
 * to regenerate Url Rewrites of all categories in all stores, set an entity type to "category":
 >`$> php bin/magento ok:urlrewrites:regenerate --entity-type=category`

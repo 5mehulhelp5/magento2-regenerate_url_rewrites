@@ -110,6 +110,12 @@ class RegenerateUrlRewrites extends RegenerateUrlRewritesAbstract
                     InputOption::VALUE_NONE,
                     'Regenerate url_key values (by default url_key is not regenerated).'
                 ),
+                new InputOption(
+                    self::INPUT_KEY_DELETE_ORPHANED_REWRITES,
+                    null,
+                    InputOption::VALUE_NONE,
+                    'Delete url_rewrite rows (for the given --entity-type) whose product/category no longer exists.'
+                ),
             ]);
     }
 
@@ -161,6 +167,16 @@ class RegenerateUrlRewrites extends RegenerateUrlRewritesAbstract
             }
         }
 
+        if ($this->_commandOptions['deleteOrphanedRewrites']) {
+            $this->_output->write('Deleting orphaned url_rewrite rows...');
+            if ($this->_commandOptions['entityType'] == self::INPUT_KEY_REGENERATE_ENTITY_TYPE_PRODUCT) {
+                $this->regenerateProductRewrites->deleteOrphanedRewrites();
+            } elseif ($this->_commandOptions['entityType'] == self::INPUT_KEY_REGENERATE_ENTITY_TYPE_CATEGORY) {
+                $this->regenerateCategoryRewrites->deleteOrphanedRewrites();
+            }
+            $this->_output->writeln(' Done');
+        }
+
         $this->_output->writeln('');
         $this->_output->writeln('');
 
@@ -201,6 +217,10 @@ class RegenerateUrlRewrites extends RegenerateUrlRewritesAbstract
 
         if (isset($options[self::INPUT_KEY_REGEN_URL_KEY]) && $options[self::INPUT_KEY_REGEN_URL_KEY] === true) {
             $this->_commandOptions['regenUrlKey'] = true;
+        }
+
+        if (isset($options[self::INPUT_KEY_DELETE_ORPHANED_REWRITES]) && $options[self::INPUT_KEY_DELETE_ORPHANED_REWRITES] === true) {
+            $this->_commandOptions['deleteOrphanedRewrites'] = true;
         }
 
         if (isset($options[self::INPUT_KEY_NO_REINDEX]) && $options[self::INPUT_KEY_NO_REINDEX] === true) {

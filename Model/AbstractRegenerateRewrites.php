@@ -267,6 +267,36 @@ abstract class AbstractRegenerateRewrites
     }
 
     /**
+     * Delete url_rewrite rows (for this entity type) whose product/category no longer exists (see #158)
+     *
+     * @return $this
+     */
+    public function deleteOrphanedRewrites(): static
+    {
+        $entityTable = $this->_getResourceConnection()->getTableName(
+            $this->entityType === 'category' ? 'catalog_category_entity' : 'catalog_product_entity'
+        );
+
+        $connection = $this->_getResourceConnection()->getConnection();
+        $connection->beginTransaction();
+        try {
+            $connection->delete(
+                $this->_getMainTableName(),
+                [
+                    'entity_type = ?' => $this->entityType,
+                    "entity_id NOT IN (SELECT entity_id FROM {$entityTable})",
+                ]
+            );
+            $connection->commit();
+
+        } catch (\Exception $e) {
+            $connection->rollBack();
+        }
+
+        return $this;
+    }
+
+    /**
      * Update "catalog_url_rewrite_product_category" table
      *
      * @return $this
