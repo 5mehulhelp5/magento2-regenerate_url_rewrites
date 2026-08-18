@@ -14,6 +14,7 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Filter\FilterManager;
 
 class Regenerate extends AbstractHelper
 {
@@ -28,18 +29,26 @@ class Regenerate extends AbstractHelper
     protected $scopeConfig;
 
     /**
+     * @var FilterManager
+     */
+    protected $filterManager;
+
+    /**
      * Regenerate constructor.
      * @param Context $context
      * @param StoreManagerInterface $storeManager
+     * @param FilterManager $filterManager
      */
     public function __construct(
         Context               $context,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        FilterManager         $filterManager
     )
     {
         parent::__construct($context);
         $this->storeManager = $storeManager;
         $this->scopeConfig = $context->getScopeConfig();
+        $this->filterManager = $filterManager;
     }
 
     /**
@@ -129,5 +138,16 @@ class Regenerate extends AbstractHelper
     protected function _clearRequestPath(string $requestPath): string
     {
         return preg_replace(['#/+#', '#\./+#'], ['/', '/'], ltrim($requestPath, '/.'));
+    }
+
+    /**
+     * Sanitize a product SKU for use as a URL path segment (see #140)
+     *
+     * @param string $sku
+     * @return string
+     */
+    public function sanitizeSkuForUrl(string $sku): string
+    {
+        return $this->filterManager->translitUrl($sku);
     }
 }

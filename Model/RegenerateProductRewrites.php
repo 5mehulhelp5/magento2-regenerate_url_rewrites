@@ -223,9 +223,16 @@ class RegenerateProductRewrites extends AbstractRegenerateRewrites
             $urlRewrites = $this->helper->sanitizeProductUrlRewrites($urlRewrites);
 
             if (!empty($urlRewrites)) {
+                // append the product's SKU as an extra URL segment, e.g. screws.html ->
+                // screws-2244000004.html (see #140)
+                $skuSegment = $this->regenerateOptions['addSkuToUrl']
+                    ? $this->helper->sanitizeSkuForUrl($entity->getSku())
+                    : '';
+
                 $this->saveUrlRewrites(
                     $urlRewrites,
-                    [['entity_type' => $this->entityType, 'entity_id' => $entity->getId(), 'store_id' => $storeId]]
+                    [['entity_type' => $this->entityType, 'entity_id' => $entity->getId(), 'store_id' => $storeId]],
+                    $skuSegment
                 );
             }
         } catch (\Exception $e) {

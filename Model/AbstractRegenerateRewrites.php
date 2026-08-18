@@ -94,6 +94,7 @@ abstract class AbstractRegenerateRewrites
         $this->regenerateOptions['skipProducts'] = false;
         $this->regenerateOptions['skipExisting'] = false;
         $this->regenerateOptions['includeNotVisible'] = false;
+        $this->regenerateOptions['addSkuToUrl'] = false;
     }
 
     /**
@@ -122,11 +123,12 @@ abstract class AbstractRegenerateRewrites
      *
      * @param array $urlRewrites
      * @param array $entityData
+     * @param string $urlSegmentToAppend
      * @return $this
      */
-    public function saveUrlRewrites(array $urlRewrites, array $entityData = []): static
+    public function saveUrlRewrites(array $urlRewrites, array $entityData = [], string $urlSegmentToAppend = ''): static
     {
-        $data = $this->_prepareUrlRewrites($urlRewrites);
+        $data = $this->_prepareUrlRewrites($urlRewrites, $urlSegmentToAppend);
 
         if (!$this->regenerateOptions['saveOldUrls'] && empty($entityData) && !empty($data)) {
             $entityData = $data;
@@ -359,9 +361,10 @@ abstract class AbstractRegenerateRewrites
 
     /**
      * @param array $urlRewrites
+     * @param string $urlSegmentToAppend
      * @return array
      */
-    protected function _prepareUrlRewrites(array $urlRewrites): array
+    protected function _prepareUrlRewrites(array $urlRewrites, string $urlSegmentToAppend = ''): array
     {
         $result = [];
         foreach ($urlRewrites as $urlRewrite) {
@@ -383,6 +386,12 @@ abstract class AbstractRegenerateRewrites
 
             // If the last symbol was slash - let's use it as url suffix
             $urlSuffix = substr($originalRequestPath, -1) === '/' ? '/' : '';
+
+            // splice in an extra segment (e.g. product SKU) before the dedup-index check, so the
+            // path is already unique in the common case (see #140)
+            if ($urlSegmentToAppend !== '') {
+                $pathParts['filename'] .= '-' . $urlSegmentToAppend;
+            }
 
             // re-set Url Rewrite with sanitized parts
             $rewrite['request_path'] = $this->_mergePartsIntoRewriteRequest($pathParts, '', $urlSuffix);
