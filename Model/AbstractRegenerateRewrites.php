@@ -92,6 +92,7 @@ abstract class AbstractRegenerateRewrites
         $this->regenerateOptions['regenUrlKey'] = false;
         $this->regenerateOptions['showProgress'] = false;
         $this->regenerateOptions['skipProducts'] = false;
+        $this->regenerateOptions['skipExisting'] = false;
     }
 
     /**
@@ -414,6 +415,24 @@ abstract class AbstractRegenerateRewrites
             ->where('store_id = ?', $rewrite['store_id'])
             ->where('entity_id != ?', $rewrite['entity_id']);
         return $this->_getResourceConnection()->getConnection()->fetchOne($select);
+    }
+
+    /**
+     * Check if any Url Rewrite already exists for this entity/store, regardless of request_path
+     * (used by --skip-existing, see #50)
+     *
+     * @param int $entityId
+     * @param int $storeId
+     * @return bool
+     */
+    protected function _urlRewriteExistsForEntity(int $entityId, int $storeId): bool
+    {
+        $select = $this->_getResourceConnection()->getConnection()->select()
+            ->from($this->_getMainTableName(), ['url_rewrite_id'])
+            ->where('entity_type = ?', $this->entityType)
+            ->where('entity_id = ?', $entityId)
+            ->where('store_id = ?', $storeId);
+        return (bool)$this->_getResourceConnection()->getConnection()->fetchOne($select);
     }
 
     /**

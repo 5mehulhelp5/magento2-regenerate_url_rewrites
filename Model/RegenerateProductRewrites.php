@@ -185,6 +185,13 @@ class RegenerateProductRewrites extends AbstractRegenerateRewrites
      */
     public function processProduct($entity, int $storeId = 0): static
     {
+        // skip entities that already have a URL Rewrite for this store, instead of always
+        // deleting + regenerating (see #50)
+        if ($this->regenerateOptions['skipExisting'] && $this->_urlRewriteExistsForEntity($entity->getId(), $storeId)) {
+            $this->progressBarProgress++;
+            return $this;
+        }
+
         $entity->setStoreId($storeId)->setData('url_path', null);
 
         if ($this->regenerateOptions['saveOldUrls']) {

@@ -212,6 +212,12 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
      */
     protected function categoryProcess($category, int $storeId = 0): static
     {
+        // skip entities that already have a URL Rewrite for this store, instead of always
+        // deleting + regenerating (see #50)
+        if ($this->regenerateOptions['skipExisting'] && $this->_urlRewriteExistsForEntity($category->getId(), $storeId)) {
+            return $this;
+        }
+
         $category->setStoreId($storeId);
 
         if ($this->regenerateOptions['saveOldUrls']) {
