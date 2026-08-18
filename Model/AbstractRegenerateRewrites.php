@@ -93,6 +93,7 @@ abstract class AbstractRegenerateRewrites
         $this->regenerateOptions['showProgress'] = false;
         $this->regenerateOptions['skipProducts'] = false;
         $this->regenerateOptions['skipExisting'] = false;
+        $this->regenerateOptions['includeNotVisible'] = false;
     }
 
     /**

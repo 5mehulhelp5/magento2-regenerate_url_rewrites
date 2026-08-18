@@ -309,9 +309,14 @@ class RegenerateProductRewrites extends AbstractRegenerateRewrites
             ->addAttributeToSelect('visibility')
             ->addAttributeToSelect('url_key')
             ->addAttributeToSelect('url_path')
-            ->addAttributeToFilter('visibility', ['neq' => Visibility::VISIBILITY_NOT_VISIBLE])
             // use limit to avoid an "eating" of a memory
             ->setPageSize($this->productsCollectionPageSize);
+
+        // exclude "Not Visible Individually" products by default (see #130); --include-not-visible
+        // opts back in, e.g. for configurable child products (see #131)
+        if (!$this->regenerateOptions['includeNotVisible']) {
+            $productsCollection->addAttributeToFilter('visibility', ['neq' => Visibility::VISIBILITY_NOT_VISIBLE]);
+        }
 
         if (count($productsFilter) > 0) {
             $productsCollection->addIdFilter($productsFilter);
