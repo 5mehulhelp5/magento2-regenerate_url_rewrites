@@ -252,8 +252,9 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
             $this->saveUrlRewrites($categoryUrlRewriteResult);
         }
 
-        // if config option "Use Category Path for Product URLs" is "Yes" then regenerate product urls
-        if ($this->helper->useCategoriesPathForProductUrls($storeId)) {
+        // if config option "Use Category Path for Product URLs" is "Yes" then regenerate product urls,
+        // unless explicitly skipped (see #86)
+        if (!$this->regenerateOptions['skipProducts'] && $this->helper->useCategoriesPathForProductUrls($storeId)) {
             $productsIds = $this->_getCategoriesProductsIds($category->getAllChildren());
             if (!empty($productsIds)) {
                 $options = $this->regenerateOptions;
