@@ -26,6 +26,10 @@ abstract class RegenerateUrlRewritesAbstract extends Command
     const INPUT_KEY_SAVE_REWRITES_HISTORY = 'save-old-urls';
     const INPUT_KEY_REGEN_URL_KEY = 'regen-url-key';
     const INPUT_KEY_DELETE_ORPHANED_REWRITES = 'delete-orphaned-rewrites';
+    const INPUT_KEY_SKIP_PRODUCTS = 'skip-products';
+    const INPUT_KEY_SKIP_EXISTING = 'skip-existing';
+    const INPUT_KEY_INCLUDE_NOT_VISIBLE = 'include-not-visible';
+    const INPUT_KEY_ADD_SKU_TO_URL = 'add-sku-to-url';
     const INPUT_KEY_NO_REINDEX = 'no-reindex';
     const INPUT_KEY_NO_PROGRESS = 'no-progress';
     const INPUT_KEY_NO_CACHE_FLUSH = 'no-cache-flush';
@@ -124,6 +128,10 @@ abstract class RegenerateUrlRewritesAbstract extends Command
         $this->_commandOptions['productId'] = null;
         $this->_commandOptions['regenUrlKey'] = false;
         $this->_commandOptions['deleteOrphanedRewrites'] = false;
+        $this->_commandOptions['skipProducts'] = false;
+        $this->_commandOptions['skipExisting'] = false;
+        $this->_commandOptions['includeNotVisible'] = false;
+        $this->_commandOptions['addSkuToUrl'] = false;
     }
 
     /**

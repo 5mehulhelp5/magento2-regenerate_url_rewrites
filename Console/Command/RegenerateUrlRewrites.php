@@ -116,6 +116,30 @@ class RegenerateUrlRewrites extends RegenerateUrlRewritesAbstract
                     InputOption::VALUE_NONE,
                     'Delete url_rewrite rows (for the given --entity-type) whose product/category no longer exists.'
                 ),
+                new InputOption(
+                    self::INPUT_KEY_SKIP_PRODUCTS,
+                    null,
+                    InputOption::VALUE_NONE,
+                    'Skip regenerating associated product URLs when regenerating categories.'
+                ),
+                new InputOption(
+                    self::INPUT_KEY_SKIP_EXISTING,
+                    null,
+                    InputOption::VALUE_NONE,
+                    'Skip an entity entirely if it already has any URL Rewrite for the current store.'
+                ),
+                new InputOption(
+                    self::INPUT_KEY_INCLUDE_NOT_VISIBLE,
+                    null,
+                    InputOption::VALUE_NONE,
+                    'Also regenerate URLs for products with visibility "Not Visible Individually" (e.g. configurable child products).'
+                ),
+                new InputOption(
+                    self::INPUT_KEY_ADD_SKU_TO_URL,
+                    null,
+                    InputOption::VALUE_NONE,
+                    'Append the product\'s SKU as a URL segment in generated product Url Rewrites, e.g. screws.html -> screws-2244000004.html.'
+                ),
             ]);
     }
 
@@ -221,6 +245,22 @@ class RegenerateUrlRewrites extends RegenerateUrlRewritesAbstract
 
         if (isset($options[self::INPUT_KEY_DELETE_ORPHANED_REWRITES]) && $options[self::INPUT_KEY_DELETE_ORPHANED_REWRITES] === true) {
             $this->_commandOptions['deleteOrphanedRewrites'] = true;
+        }
+
+        if (isset($options[self::INPUT_KEY_SKIP_PRODUCTS]) && $options[self::INPUT_KEY_SKIP_PRODUCTS] === true) {
+            $this->_commandOptions['skipProducts'] = true;
+        }
+
+        if (isset($options[self::INPUT_KEY_SKIP_EXISTING]) && $options[self::INPUT_KEY_SKIP_EXISTING] === true) {
+            $this->_commandOptions['skipExisting'] = true;
+        }
+
+        if (isset($options[self::INPUT_KEY_INCLUDE_NOT_VISIBLE]) && $options[self::INPUT_KEY_INCLUDE_NOT_VISIBLE] === true) {
+            $this->_commandOptions['includeNotVisible'] = true;
+        }
+
+        if (isset($options[self::INPUT_KEY_ADD_SKU_TO_URL]) && $options[self::INPUT_KEY_ADD_SKU_TO_URL] === true) {
+            $this->_commandOptions['addSkuToUrl'] = true;
         }
 
         if (isset($options[self::INPUT_KEY_NO_REINDEX]) && $options[self::INPUT_KEY_NO_REINDEX] === true) {
