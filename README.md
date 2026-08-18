@@ -82,6 +82,24 @@ or
 or, for categories:
 >`$> php bin/magento ok:urlrewrites:regenerate --entity-type=category --delete-orphaned-rewrites`
 
+* to skip regenerating associated product URLs when regenerating categories (faster on large catalogs when "Use Category Path for Product URLs" is enabled), use option `--skip-products`:
+>`$> php bin/magento ok:urlrewrites:regenerate --entity-type=category --skip-products`
+
+Note: this option only has an effect when the "Use Category Path for Product URLs" setting
+(`Stores > Configuration > Catalog > Catalog > Search Engine Optimization`, config path
+`catalog/seo/product_use_categories`) is enabled — that setting is what makes category regeneration
+cascade into product URLs in the first place. If it's disabled, category regeneration never touches
+product URLs, with or without `--skip-products`.
+
+* to skip an entity entirely if it already has any URL Rewrite for the current store, instead of always deleting + regenerating, use option `--skip-existing`:
+>`$> php bin/magento ok:urlrewrites:regenerate --skip-existing`
+
+* to also regenerate URLs for products with visibility "Not Visible Individually" (e.g. configurable child products, excluded by default), use option `--include-not-visible`:
+>`$> php bin/magento ok:urlrewrites:regenerate --include-not-visible`
+
+* to append the product's SKU as a URL segment in generated product Url Rewrites (e.g. `screws.html` -> `screws-2244000004.html`), use option `--add-sku-to-url`:
+>`$> php bin/magento ok:urlrewrites:regenerate --add-sku-to-url`
+
 #### REGENERATE URL REWRITES OF CATEGORY
 * to regenerate Url Rewrites of all categories in all stores, set an entity type to "category":
 >`$> php bin/magento ok:urlrewrites:regenerate --entity-type=category`

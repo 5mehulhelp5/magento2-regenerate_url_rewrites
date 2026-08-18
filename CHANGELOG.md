@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.9.0] - 2026-08-11
+### Added
+- new option `--skip-products` — skip regenerating associated product URLs when regenerating categories (useful on large catalogs when "Use Category Path for Product URLs" is enabled)
+- new option `--skip-existing` — skip an entity entirely if it already has any url_rewrite for the current store, instead of always deleting + regenerating
+- new option `--include-not-visible` — also regenerate URLs for products with visibility "Not Visible Individually" (e.g. configurable child products), excluded by default since 1.6.2
+- new option `--add-sku-to-url` — append the product's SKU as a URL segment in generated product Url Rewrites, e.g. `screws.html` -> `screws-2244000004.html`
+
+### Fixed
+- guard against writing a blank url_key when Magento's own transliteration can't handle the product/category title (e.g. Arabic/other non-Latin scripts)
+
 ## [1.8.0] - 2026-08-10
 ### Changed
 - **BREAKING**: inverted url_key regeneration default — url_key is no longer regenerated automatically; use the new `--regen-url-key` option to opt in. The old `--no-regen-url-key` option is removed entirely (not deprecated) — update any existing scripts/cron jobs that relied on the previous default.
