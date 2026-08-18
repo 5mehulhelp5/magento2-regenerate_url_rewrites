@@ -203,12 +203,22 @@ class RegenerateProductRewrites extends AbstractRegenerateRewrites
         // if "request_path" is not null or equal to "false" then Magento do not search and do not use Url Rewrites
         $updateAttributes = ['url_path' => null];
         if ($this->regenerateOptions['regenUrlKey']) {
+            $originalUrlKey = $entity->getUrlKey();
             $generatedKey = $this->_getProductUrlPathGenerator()->getUrlKey($entity->setUrlKey(null));
 
-            // don't write a redundant per-store override if it's identical to the default-scope
-            // value (see #92)
-            if ($storeId == 0 || $generatedKey !== $this->_getDefaultScopeUrlKey($entity->getId())) {
-                $updateAttributes['url_key'] = $generatedKey;
+            // don't write a blank url_key when Magento's own transliteration can't handle the title
+            // (see #89), and don't write a redundant per-store override if it's identical to the
+            // default-scope value (see #92)
+            if (trim($generatedKey) === '') {
+                // restore the entity's original url_key so the rewrite generation below still
+                // produces the existing (working) path instead of a blank/broken one
+                $entity->setUrlKey($originalUrlKey);
+            } else {
+                $entity->setUrlKey($generatedKey);
+
+                if ($storeId == 0 || $generatedKey !== $this->_getDefaultScopeUrlKey($entity->getId())) {
+                    $updateAttributes['url_key'] = $generatedKey;
+                }
             }
         }
 

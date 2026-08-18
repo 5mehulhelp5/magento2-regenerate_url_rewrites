@@ -225,14 +225,23 @@ class RegenerateCategoryRewrites extends AbstractRegenerateRewrites
         }
 
         if ($this->regenerateOptions['regenUrlKey']) {
+            $originalUrlKey = $category->getUrlKey();
             $category->setOrigData('url_key', null);
             $generatedKey = $this->_getCategoryUrlPathGenerator()->getUrlKey($category->setUrlKey(null));
-            $category->setUrlKey($generatedKey);
 
-            // don't write a redundant per-store override if it's identical to the default-scope
-            // value (see #92)
-            if ($storeId == 0 || $generatedKey !== $this->_getDefaultScopeUrlKey($category->getId())) {
-                $category->getResource()->saveAttribute($category, 'url_key');
+            // don't write a blank url_key when Magento's own transliteration can't handle the title
+            // (see #89), and don't write a redundant per-store override if it's identical to the
+            // default-scope value (see #92)
+            if (trim($generatedKey) === '') {
+                // restore the category's original url_key so the rewrite generation below still
+                // produces the existing (working) path instead of a blank/broken one
+                $category->setUrlKey($originalUrlKey);
+            } else {
+                $category->setUrlKey($generatedKey);
+
+                if ($storeId == 0 || $generatedKey !== $this->_getDefaultScopeUrlKey($category->getId())) {
+                    $category->getResource()->saveAttribute($category, 'url_key');
+                }
             }
         }
 
